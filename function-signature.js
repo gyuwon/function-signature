@@ -172,7 +172,7 @@ var cache = {};
  * Parameters:
  * - $this: The value of this provided for the call to fn.
  * - fn: The function to call.
- * - sig: Optional. The function signature.
+ * - [sig]: The function signature.
  * - params: The object that contains named parameters.
  *
  */

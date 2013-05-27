@@ -1,1 +1,0 @@
-var signature = require('./function-signature');
