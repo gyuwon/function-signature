@@ -24,20 +24,35 @@
  *
  */
 
+
+/*
+ *
+ * Definition of error messages.
+ *
+ */
 var err_msg_invalid_operation = 'Invalid operation';
 var err_msg_invalid_regex = 'The regular expression is invalid.';
 var err_msn_arg_fn_not_function = 'The argument \'fn\' is not a function.';
 
+
 /*
  *
- * Internal shorcut of Object.defineProperty function
+ * Function header regular expression.
+ *
+ */
+var regex = /[ \t\r\n]*function([ \t\r\n]+[a-zA-Z][a-zA-Z0-9]*){0,1}[ \t\r\n]*\([ \t\r\n]*([ \t\r\n]*[a-zA-Z][a-zA-Z0-9]*([ \t\r\n]*,[ \t\r\n]*[a-zA-Z][a-zA-Z0-9]*)*)?[ \t\r\n]*\)/;
+
+
+/*
+ *
+ * Internal shorcut of Object.defineProperty function.
  *
  */
 function _prop(target, key, value, options) {
 	if (typeof options !== 'string') {
 		options = '';
 	}
-
+	options = options.toLowerCase();
 	Object.defineProperty(target, key, {
 		enumerable: options.indexOf('e') !== -1,
 		writable: options.indexOf('w') !== -1,
@@ -46,38 +61,46 @@ function _prop(target, key, value, options) {
 	});
 }
 
+
 /*
  *
- * Declaration of a signature description type
+ * Declaration of a function signature description type.
  *
  */
 function signature() {}
 
+
 /*
  *
  * Construct the signature of the specified function.
+ * The function can be called with named parameters using the signature.
  * 
- * Returns: An object containing information about the signature of the parameter 'fn'
+ * Returns: An object containing information about the signature of the parameter 'fn'.
  *
  * Parameters
- * - fn: A source function to analyze a signature
+ * - fn: A source function to analyze a signature.
  *
  */
 var functionSignature = function (fn) {
+
 	if (typeof fn !== 'function') {
 		return;
 	}
-	var regex = /[ \t]*function([ \t]+[a-zA-Z][a-zA-Z0-9]*){0,1}[ \t]*\([ \t]*([ \t]*[a-zA-Z][a-zA-Z0-9]*([ \t]*,[ \t]*[a-zA-Z][a-zA-Z0-9]*)*)?[ \t]*\)/;
+
 	var fnString = fn.toString();
+
 	var match = fnString.match(regex);
 	if (!match) {
 		throw new Error(err_msg_invalid_regex);
 	}
+
 	var sig = new signature();
+
 	_prop(sig, 'name', fn.name);
 	if (match[1] && fn.name !== match[1].trim()) {
 		throw new Error(err_msg_invalid_regex);
 	}
+
 	_prop(sig, 'params', {}, 'e');
 	_prop(sig.params, 'map', {});
 	var params = [];
@@ -99,16 +122,62 @@ var functionSignature = function (fn) {
 		_prop(sig.params.map, param.name, i, 'e');
 	}
 	_prop(sig.params, 'length', params.length);
+
+	_prop(sig, 'toString', function () {
+		if (this instanceof signature !== true) {
+			throw new Error(err_msg_invalid_operation);
+		}
+		var s = this.name + '(';
+		for (var i = 0; i < this.params.length; i++) {
+			if (i !== 0) {
+				s += ', ';
+			}
+			s += this.params[i].name;
+		}
+		s += ')';
+		return s;
+	});
+
 	return sig;
+
 };
 
+
+/*
+ *
+ * Returns a value that indicates whether the specified object is a function signature.
+ *
+ * Returns: true if the specified object is a function signature; otherwise, false.
+ *
+ * Parameters:
+ * - sig: The object to test.
+ *
+ */
 functionSignature.isSignature = function (sig) {
+
 	return sig instanceof signature;
+
 }
+
 
 var cache = {};
 
+
+/*
+ *
+ * Call specified function with named paramaters.
+ *
+ * Returns: The result of the function invocation.
+ *
+ * Parameters:
+ * - $this: The value of this provided for the call to fn.
+ * - fn: The function to call.
+ * - sig: Optional. The function signature.
+ * - params: The object that contains named parameters.
+ *
+ */
 functionSignature.invoke = function ($this, fn, sig, params) {
+
 	if (typeof fn !== 'function') {
 		throw new Error(err_msn_arg_fn_not_function);
 	}
@@ -131,6 +200,8 @@ functionSignature.invoke = function ($this, fn, sig, params) {
 	}
 
 	return fn.apply($this, args);
+
 };
+
 
 module.exports = functionSignature;
