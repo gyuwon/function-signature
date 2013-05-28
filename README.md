@@ -10,7 +10,7 @@ This library is made to use in development of a convention based framework.
     
 ## Usage
 
-    var signature = require('./function-signature');
+    var signature = require('function-signature');
     
     function web_service(cplusplus, java) {
         return cplusplus >= 3 && java >= 5;
