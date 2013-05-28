@@ -25,11 +25,15 @@ console.log('Extraction of function signatures...');
 		z
 	) {}
 
+	function _f5($a) {}
+
 	var functions = [
+		Math.pow,
 		f1,
 		f2,
 		f3,
 		f4,
+		_f5,
 		function (x1, y1, x2, y2) {}
 	];
 

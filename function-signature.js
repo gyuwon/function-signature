@@ -40,7 +40,7 @@ var err_msn_arg_fn_not_function = 'The argument \'fn\' is not a function.';
  * Function header regular expression.
  *
  */
-var regex = /[ \t\r\n]*function([ \t\r\n]+[a-zA-Z][a-zA-Z0-9]*){0,1}[ \t\r\n]*\([ \t\r\n]*([ \t\r\n]*[a-zA-Z][a-zA-Z0-9]*([ \t\r\n]*,[ \t\r\n]*[a-zA-Z][a-zA-Z0-9]*)*)?[ \t\r\n]*\)/;
+var regex = /[ \t\r\n]*function([ \t\r\n]+[a-zA-Z_$][a-zA-Z0-9_$]*){0,1}[ \t\r\n]*\([ \t\r\n]*([ \t\r\n]*[a-zA-Z_$][a-zA-Z0-9_$]*([ \t\r\n]*,[ \t\r\n]*[a-zA-Z_$][a-zA-Z0-9_$]*)*)?[ \t\r\n]*\)/;
 
 
 /*
