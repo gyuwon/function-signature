@@ -1,0 +1,11 @@
+# Cloud9 files #
+################
+.c9revisions/
+
+# WebStorm files #
+##################
+.idea/
+
+# Mac files #
+#############
+.DS_Store
