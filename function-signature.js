@@ -32,7 +32,7 @@
  */
 var err_msg_invalid_operation = 'Invalid operation';
 var err_msg_invalid_regex = 'The regular expression is invalid.';
-var err_msn_arg_fn_not_function = 'The argument \'fn\' is not a function.';
+var err_msg_arg_fn_not_function = 'The argument \'fn\' is not a function.';
 
 
 /*
@@ -82,7 +82,7 @@ function signature() {}
  *
  */
 var functionSignature = function (fn) {
-
+	/* jshint -W004 */
 	if (typeof fn !== 'function') {
 		return;
 	}
@@ -117,7 +117,7 @@ var functionSignature = function (fn) {
 		throw new Error(err_msg_invalid_operation);
 	}
 	for (var i in params) {
-		var param = params[i]
+		var param = params[i];
 		_prop(sig.params, i, param, 'e');
 		_prop(sig.params.map, param.name, i, 'e');
 	}
@@ -139,7 +139,7 @@ var functionSignature = function (fn) {
 	});
 
 	return sig;
-
+	/* jshint +W004 */
 };
 
 
@@ -157,7 +157,7 @@ functionSignature.isSignature = function (sig) {
 
 	return sig instanceof signature;
 
-}
+};
 
 
 var cache = {};
@@ -179,7 +179,7 @@ var cache = {};
 functionSignature.invoke = function ($this, fn, sig, params) {
 
 	if (typeof fn !== 'function') {
-		throw new Error(err_msn_arg_fn_not_function);
+		throw new Error(err_msg_arg_fn_not_function);
 	}
 
 	if (functionSignature.isSignature(sig) !== true) {
