@@ -1,5 +1,5 @@
 # function-signature
-function-signature is a library for Javascript function signatures. The library exports main function that extracts the signature that contains a name and a list of parameters of function. This library is for the convention based JavaScript programming.
+function-signature is a library for Javascript function signatures. The library exports main function that extracts the signature that contains a name and a list of parameters of function. This library made is for the convention based JavaScript programming.
 
 ## Installation
 ```
