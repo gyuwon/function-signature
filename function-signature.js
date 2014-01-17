@@ -43,16 +43,16 @@ var regex = /^[ \s]*function([ \s]+[A-Z_\$][A-Z0-9_\$]*){0,1}[ \s]*\([ \s]*([ \s
  * The internal shorcut of Object.defineProperty function.
  */
 function _prop(target, key, value, options) {
-    if (typeof options !== 'string') {
-        options = '';
-    }
-    options = options.toLowerCase();
-    Object.defineProperty(target, key, {
-        enumerable: options.indexOf('e') !== -1,
-        writable: options.indexOf('w') !== -1,
-        configurable: options.indexOf('c') !== -1,
-        value: value
-    });
+  if (typeof options !== 'string') {
+    options = '';
+  }
+  options = options.toLowerCase();
+  Object.defineProperty(target, key, {
+    enumerable: options.indexOf('e') !== -1,
+    writable: options.indexOf('w') !== -1,
+    configurable: options.indexOf('c') !== -1,
+    value: value
+  });
 }
 
 
@@ -63,60 +63,58 @@ function _prop(target, key, value, options) {
  * - fn: A source function to analyze a signature.
  */
 function Signature(fn) {
-    if (typeof fn !== 'function') {
-        return;
-    }
+  if (typeof fn !== 'function') {
+    return;
+  }
 
-    var self = this;
+  var self = this
+    , fnString = fn.toString()
+    , match = fnString.match(regex);
+  if (!match) {
+    throw new Error(err_msg_invalid_regex);
+  }
 
-    var fnString = fn.toString();
+  _prop(self, 'name', fn.name);
+  if (match[1] && fn.name !== match[1].trim()) {
+    throw new Error(err_msg_invalid_regex);
+  }
 
-    var match = fnString.match(regex);
-    if (!match) {
-        throw new Error(err_msg_invalid_regex);
+  _prop(self, 'params', {}, 'e');
+  _prop(self.params, 'map', {});
+  var params = [];
+  if (match[2]) {
+    var paramsSource = match[2].split(',');
+    for (var i in paramsSource) {
+      var name = paramsSource[i].trim();
+      var param = {};
+      _prop(param, 'name', name, 'e');
+      params.push(param);
     }
+  }
+  if (fn.length !== params.length) {
+    throw new Error(err_msg_invalid_operation);
+  }
+  params.forEach(function (param, i) {
+    _prop(self.params, i, param, 'e');
+    _prop(self.params.map, param.name, i, 'e');
+  });
 
-    _prop(self, 'name', fn.name);
-    if (match[1] && fn.name !== match[1].trim()) {
-        throw new Error(err_msg_invalid_regex);
-    }
+  _prop(self.params, 'length', params.length);
 
-    _prop(self, 'params', {}, 'e');
-    _prop(self.params, 'map', {});
-    var params = [];
-    if (match[2]) {
-        var paramsSource = match[2].split(',');
-        for (var i in paramsSource) {
-            var name = paramsSource[i].trim();
-            var param = {};
-            _prop(param, 'name', name, 'e');
-            params.push(param);
-        }
+  _prop(self, 'toString', function () {
+    if (this instanceof Signature !== true) {
+      throw new Error(err_msg_invalid_operation);
     }
-    if (fn.length !== params.length) {
-        throw new Error(err_msg_invalid_operation);
+    var s = this.name + '(';
+    for (var i = 0; i < this.params.length; i++) {
+      if (i !== 0) {
+        s += ', ';
+      }
+      s += this.params[i].name;
     }
-    for (var i in params) {
-        var param = params[i]
-        _prop(self.params, i, param, 'e');
-        _prop(self.params.map, param.name, i, 'e');
-    }
-    _prop(self.params, 'length', params.length);
-
-    _prop(self, 'toString', function () {
-        if (this instanceof Signature !== true) {
-            throw new Error(err_msg_invalid_operation);
-        }
-        var s = this.name + '(';
-        for (var i = 0; i < this.params.length; i++) {
-            if (i !== 0) {
-                s += ', ';
-            }
-            s += this.params[i].name;
-        }
-        s += ')';
-        return s;
-    });
+    s += ')';
+    return s;
+  });
 }
 
 
@@ -130,7 +128,7 @@ function Signature(fn) {
  * - fn: A source function to analyze a signature.
  */
 var functionSignature = function (fn) {
-    return new Signature(fn);
+  return new Signature(fn);
 };
 
 
@@ -143,39 +141,35 @@ var functionSignature = function (fn) {
  * - sig: The object to test.
  */
 functionSignature.isSignature = function (sig) {
-
-    return sig instanceof Signature;
-
-}
-
+  return sig instanceof Signature;
+};
 
 var cache = {};
 
-
 var args = function (fn, sig, params) {
+  if (typeof fn !== 'function') {
+    throw new Error(err_msn_arg_fn_not_function);
+  }
 
-    if (typeof fn !== 'function') {
-        throw new Error(err_msn_arg_fn_not_function);
+  if (functionSignature.isSignature(sig) !== true) {
+    params = sig;
+    sig = cache[fn];
+    if (!sig) {
+      sig = functionSignature(fn);
+      cache[fn] = sig;
     }
+  }
 
-    if (functionSignature.isSignature(sig) !== true) {
-        params = sig;
-        sig = cache[fn];
-        if (!sig) {
-            sig = functionSignature(fn);
-            cache[fn] = sig;
-        }
-    }
+  params = params || {};
 
-    var args = [];
-    for (var i = 0; i < sig.params.length; i++) {
-        args[i] = undefined;
-    }
-    for (var n in params) {
-        args[sig.params.map[n]] = params[n];
-    }
-    return args;
-
+  var args = [];
+  for (var i = 0; i < sig.params.length; i++) {
+    args[i] = undefined;
+  }
+  for (var n in params) {
+    args[sig.params.map[n]] = params[n];
+  }
+  return args;
 };
 
 
@@ -191,9 +185,7 @@ var args = function (fn, sig, params) {
  * - params: The object that contains named parameters.
  */
 functionSignature.invoke = function ($this, fn, sig, params) {
-
-    return fn.apply($this, args(fn, sig, params));
-
+  return fn.apply($this, args(fn, sig, params));
 };
 
 
@@ -208,9 +200,7 @@ functionSignature.invoke = function ($this, fn, sig, params) {
  * - params: The object that contains named parameters.
  */
 functionSignature.create = function (fn, sig, params) {
-
-    return new (fn.bind.apply(fn, [fn].concat(args(fn, sig, params))));
-
+  return new (fn.bind.apply(fn, [fn].concat(args(fn, sig, params))))();
 };
 
 

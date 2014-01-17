@@ -1,11 +1,16 @@
-# Cloud9 files #
-################
-.c9revisions/
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
 
-# WebStorm files #
-##################
-.idea/
+pids
+logs
+results
 
-# Mac files #
-#############
-.DS_Store
+npm-debug.log
+node_modules
+

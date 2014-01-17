@@ -1,33 +1,22 @@
-var signature = require('./function-signature');
+var fs = require('./function-signature');
 
-function web_service(cplusplus, java) {
-	return cplusplus >= 3 && java >= 5;
+function printFormation(front, left, right) {
+  console.log('front: %s, left: %s, right: %s', front, left, right);
 }
 
-function win8_app(csharp, javascript) {
-	return csharp >= 5 || javascript >= 2;
+// Call printFormation function with named parameter set
+fs.invoke(null, printFormation, { front: 'ironman', left: 'hulk', right: 'thor' });
+
+function Formation(front, left, right) {
+  this.front = front;
+  this.left = left;
+  this.right = right;
+  this.print = function () {
+    printFormation(this.front, this.left, this.right);
+  };
 }
 
-function data_processor(scalar) {
-	return scalar >= 4;
-}
+// Create an instance of Formation function with named parameter set
+var formation = fs.create(Formation, { front: 'ironman', left: 'hulk', right: 'thor' });
 
-var projects = [web_service, win8_app, data_processor];
-
-var experience = {
-	cplusplus: 3,
-	csharp: 4,
-	java: 6,
-	javascript: 3
-};
-
-for (var i in projects) {
-
-	var p = projects[i];
-
-	// Call a function with named parameters.
-	if (signature.invoke(null, p, experience)) {
-		console.log(p.name);
-	}
-
-}
+formation.print();
