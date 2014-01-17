@@ -192,4 +192,60 @@ describe('function-signature', function () {
       }
     });
   });
+
+  it('should extract signatures for below cases', function () {
+    // Setup
+    var cases = [
+      {
+        fn: function () {}
+      },
+      {
+        fn: function() {}
+      },
+      {
+        fn: function  () {}
+      },
+      {
+        fn: function ( ) {}
+      },
+      {
+        fn: function (  ) {}
+      },
+      {
+        fn: function func() {},
+        name: 'func'
+      },
+      {
+        fn: function  func() {},
+        name: 'func'
+      },
+      {
+        fn: function func(param) {},
+        name: 'func',
+        params: ['param']
+      },
+      {
+        fn: function (param1, param2) {},
+        params: ['param1', 'param2']
+      }
+    ];
+    cases.forEach(function (elem) {
+      elem.name = elem.name || '';
+      elem.params = elem.params || [];
+    });
+
+    // Exercise
+    cases.forEach(function (elem) {
+      elem.sig = fs(elem.fn);
+    });
+
+    // Verify
+    cases.forEach(function (elem) {
+      elem.sig.name.should.equal(elem.name);
+      elem.sig.params.length.should.equal(elem.params.length);
+      for (var i in elem.params) {
+        elem.sig.params[i].name.should.equal(elem.params[i]);
+      }
+    });
+  });
 });
