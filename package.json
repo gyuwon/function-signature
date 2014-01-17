@@ -1,6 +1,6 @@
 {
   "name": "function-signature",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A library for Javascript function signatures",
   "author": {
     "name": "Yi Gyuwon",
