@@ -36,7 +36,11 @@ var err_msn_arg_fn_not_function = 'The argument \'fn\' is not a function.';
 /**
  * Function header regular expression.
  */
-var regex = /^[ \s]*function([ \s]+[A-Z_\$][A-Z0-9_\$]*){0,1}[ \s]*\([ \s]*([ \s]*[A-Z_\$][A-Z0-9_\$]*([ \s]*,[ \s]*[A-Z_\$][A-Z0-9_\$]*)*)?[ \s]*\)/i;
+var whiteSpaces = '\\s*'
+  , firstIdChar = '[A-Za-z_\\$]'
+  , nonFirstIdChar = '[A-Za-z0-9_\\$]'
+  , idToken = whiteSpaces + firstIdChar + nonFirstIdChar + '*'
+  , regex = new RegExp('^' + whiteSpaces + 'function(' + idToken + ')?' + whiteSpaces +'\\(' + whiteSpaces + '(' + idToken + '(' + whiteSpaces + ',' + idToken + ')*)?' + whiteSpaces + '\\)');
 
 
 /**
