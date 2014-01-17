@@ -8,7 +8,7 @@ $ npm install function-signature
 
 ## Usage
 ```javascript
-var fs = require('./function-signature');
+var fs = require('function-signature');
 
 function printFormation(front, left, right) {
   console.log('front: %s, left: %s, right: %s', front, left, right);
